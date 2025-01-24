@@ -2,48 +2,18 @@
 import type { GetStaticPaths } from "astro";
 import MainLayout from "../../layouts/MainLayout.astro";
 import PokemonCard from "../../components/pokemons/PokemonCard.astro";
+import type { PokemonListResponse } from "../../interfaces/pokemon-list.response";
 
-export const getStaticPaths = (() => {
+export const getStaticPaths = (async() => {
     
-    return [
-        { 
-            params:{ name: 'bulbasaur' },
-            props: { name: 'bulbasaur', url: 'https://pokeapi.co/api/v2/pokemon/1/' }
-        },
-        { 
-            params:{ name: 'ivysaur' },
-            props: { name: 'ivysaur', url: 'https://pokeapi.co/api/v2/pokemon/2/' }
-        },
-        { 
-            params:{ name: 'venusaur' },
-            props: { name: 'venusaur', url: 'https://pokeapi.co/api/v2/pokemon/3/' }
-        },
-        { 
-            params:{ name: 'charmander' },
-            props: { name: 'charmander', url: 'https://pokeapi.co/api/v2/pokemon/4/' }
-        },
-        { 
-            params:{ name: 'charmeleon' },
-            props: { name: 'charmeleon', url: 'https://pokeapi.co/api/v2/pokemon/5/' }
-        },
-        { 
-            params:{ name: 'charizard' },
-            props: { name: 'charizard', url: 'https://pokeapi.co/api/v2/pokemon/6/' }
-        },
-        { 
-            params:{ name: 'squirtle' },
-            props: { name: 'squirtle', url: 'https://pokeapi.co/api/v2/pokemon/7/' }
-        },
-        { 
-            params:{ name: 'wartotle' },
-            props: { name: 'wartotle', url: 'https://pokeapi.co/api/v2/pokemon/8/' }
-        },
-        { 
-            params:{ name: 'blastoise' },
-            props: { name: 'blastoise', url: 'https://pokeapi.co/api/v2/pokemon/9/' }
-        },
+    const resp = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151');
+    const { results } = await resp.json() as PokemonListResponse
 
-    ];
+    return results.map(result => ({
+        params: {name: result.name},
+        props: {name: result.name, url: result.url}
+    }))
+    
 }) satisfies GetStaticPaths;
 
 const {name} = Astro.params;
